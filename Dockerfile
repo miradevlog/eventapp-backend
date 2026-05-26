@@ -10,11 +10,11 @@ RUN npm ci
 # Copy application source
 COPY . .
 
-# Default port (override with PORT env at runtime)
+# Default port; override with PORT at container runtime if needed
 ENV PORT=3001
 ENV NODE_ENV=production
 
-# Optional: use a persistent path for SQLite (mount a volume at /app/data)
+# SQLite data is expected to live on a separate volume mounted at /app/data
 ENV DB_STORAGE=/app/data/db.db
 RUN mkdir -p /app/data && chown -R node:node /app/data
 

@@ -9,7 +9,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
-const isProduction = process.env.ENVIRONMENT === 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors());
 app.use(express.json());

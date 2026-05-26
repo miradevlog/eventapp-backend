@@ -36,35 +36,9 @@ The server will start running at [http://localhost:3001](http://localhost:3001)
 
 ## Swagger API Documentation
 
-The API endpoints are documented using Swagger. You can access the Swagger UI to view and test the API requests. Here’s how to access it:
+The API endpoints are documented using Swagger. You can access the Swagger UI to view and test the API requests when `NODE_ENV` is different to `production`. Here’s how to access it:
 
 • Swagger UI: Open a web browser and go to [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
-
-## API Endpoints
-
-The following endpoints are available:
-
-### Users
-
-- **POST /api/users** Create a new event.
-- **GET /api/users** Get all events.
-- **GET /api/events/:id** Get a single event by ID.
-- **PUT /api/events/:id** Update an existing event.
-- **DELETE /api/events/:id** Delete an event by ID.
-
-### Events
-
-- **POST /api/events** Create a new event.
-- **GET /api/events** Get all events.
-- **GET /api/events/:id** Get a single event by ID.
-- **PUT /api/events/:id** Update an existing event.
-- **DELETE /api/events/:id** Delete an event by ID.
-- **GET /api/events/upcoming** Get upcoming events.
-
-### Auth
-
-- **POST /api/auth/login** Authenticates the user.
-- **GET /api/auth/profile** Get the logged-in user.
 
 ## Configuration
 
@@ -88,10 +62,16 @@ Seeding runs **only once**: if users already exist, it skips and does not overwr
 
 ```bash
 docker build -t events-api .
-docker run -p 3001:3001 -e JWT_SECRET=yourSecret -v events-db:/app/data events-api
+docker run \
+  --name events-api \
+  -p 3001:3001 \
+  -e NODE_ENV=development \
+  -e JWT_SECRET=yourSecret \
+  -v events-db:/app/data \
+  events-api
 ```
 
-Set `PORT`, `JWT_SECRET`, and `ENVIRONMENT` via `-e` as needed. Use `-v events-db:/app/data` to persist the SQLite database.
+Set `NODE_ENV` and `JWT_SECRET` via `-e` as needed. Use `-v events-db:/app/data` to persist the SQLite database.
 
 ### Run image from GitHub Container Registry (GHCR)
 
@@ -99,5 +79,11 @@ After the repo is pushed to GitHub, the **Docker publish to GHCR** workflow buil
 
 ```bash
 docker pull ghcr.io/WebDev-WBSCodingSchool/events-api:latest
-docker run -p 3001:3001 -e JWT_SECRET=yourSecret -v events-db:/app/data ghcr.io/WebDev-WBSCodingSchool/events-api:latest
+docker run \
+  --name events-api \
+  -p 3001:3001 \
+  -e NODE_ENV=development \
+  -e JWT_SECRET=yourSecret \
+  -v events-db:/app/data \
+   ghcr.io/webdev-wbscodingschool/events-api:latest
 ```
