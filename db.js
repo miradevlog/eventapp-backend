@@ -1,25 +1,36 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize } from "sequelize";
 
 import UserModel from "./models/users.js";
 import EventModel from "./models/events.js";
 
-const sequelize = new Sequelize({
+// SQLite DB (lokal + Render fallback)
+export const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: process.env.DB_STORAGE || "./db.db",
   logging: false,
 });
 
-const User = UserModel(sequelize);
-const Event = EventModel(sequelize);
+// Models
+export const User = UserModel(sequelize);
+export const Event = EventModel(sequelize);
 
+// Relations
 User.hasMany(Event, { foreignKey: "organizerId" });
 Event.belongsTo(User, { foreignKey: "organizerId" });
 
-try {
-  await sequelize.sync({ force: false });
-  console.log("Database is ready");
-} catch (error) {
-  console.error("\x1b[31m%s\x1b[0m", error);
-}
+/**
+ * Initialize database
+ * IMPORTANT: explicit init instead of auto-running on import
+ */
+export async function initDB() {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection established");
 
-export { sequelize, User, Event };
+    await sequelize.sync({ force: false });
+    console.log("Database synced and ready");
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}

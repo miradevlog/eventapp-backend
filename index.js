@@ -8,7 +8,7 @@ import { setupSwagger } from './swagger.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
-const PORT = process.env.PORT ?? 3001;
+const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors());
@@ -16,17 +16,16 @@ app.use(express.json());
 
 if (!isProduction) {
   app.use(morgan('dev'));
-  setupSwagger(app, PORT);
+  setupSwagger(app);
 }
 
 app.use('/api', router);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log('\x1b[33m%s\x1b[0m', `Server running on \x1b[36m http://localhost:${PORT}`);
-  if (!isProduction)
-    console.log(
-      '\x1b[33m%s\x1b[0m',
-      `Swagger API docs available at \x1b[36m http://localhost:${PORT}/api-docs`
-    );
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+
+  if (!isProduction) {
+    console.log(`Swagger API docs available at /api-docs`);
+  }
 });
